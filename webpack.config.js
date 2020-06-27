@@ -17,7 +17,7 @@ module.exports = (env = {}) => {
     const getPlugins = () => {
         const plugins = [
             new HtmlWebpackPlugin({
-                title: 'geopath',
+                title: 'webConsole',
                 template: 'public/index.html'
             }),
         ]

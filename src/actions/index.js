@@ -1,8 +1,12 @@
 import v from '../services/validator'
 
 
-const enter = (sendsayApi) => async (dispatch, getState) => {
-   const {login, password} = getState()
+
+
+const try_auth = (sendsayApi) => (cookies) => async (dispatch, getState) => {
+   const {auth: {login, password}} = getState()
+
+  
 
    const reqData = {
     action: 'login',
@@ -24,10 +28,43 @@ const enter = (sendsayApi) => async (dispatch, getState) => {
    if (!resBody.session) {
        return dispatch({type:'AUTH_FETCH_FAIL', payload: JSON.stringify(resBody.errors[0])})
    }
-   console.log(resBody.session);
+   cookies.set('session_key', resBody.session, { path: '/' });
+
    dispatch({type:'AUTH_FETCH_SUCCESS', payload: resBody.session})
 }
 
+
+const app_mount = (sendsayApi) => (cookies) => async (dispatch) => {
+    dispatch('APP_FETCH_START')
+
+    const session = cookies.get('session_key')
+
+    if (session) {
+        
+        const res = await sendsayApi.try_pong(session)
+        const resBody = await res.json()
+      
+        if (resBody.ping) {
+            return dispatch({type: 'APP_FETCH_SUCCESS', payload: session})
+        }
+        
+    }
+
+    dispatch({type: 'APP_FETCH_SUCCESS', payload: null})
+}
+
+
+const logout = (sendsayApi) => (cookies) => async (dispatch) => {
+
+    const session = cookies.get('session_key')
+    const logout = await sendsayApi.logout(session)
+    console.log(await logout.json());
+    cookies.remove('session_key')
+    dispatch('LOGOUT')
+}
+
 export {
-    enter
+    try_auth,
+    app_mount,
+    logout
 }

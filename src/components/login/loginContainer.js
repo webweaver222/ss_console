@@ -1,9 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
-
-import { enter } from "../../actions/index";
-import withService from "../hoc/withService";
 import { compose } from "../../utils";
+
+import {try_auth } from "../../actions/index";
+import withService from "../hoc/withService";
+import { withCookies} from 'react-cookie';
+
 import Login from "./login";
 import SadFace from "./sadface";
 
@@ -65,17 +67,18 @@ const LoginContainer = ({
   return <Login render={render} />;
 };
 
-const mapDispatchToProps = (dispatch, { sendSayApi }) => {
+const mapDispatchToProps = (dispatch, { sendSayApi, cookies }) => {
   return {
     changeLog: text => dispatch({ type: "CHANGE_LOGIN_INPUT", payload: text }),
     changePass: pass => dispatch({ type: "CHANGE_PASS_INPUT", payload: pass }),
-    onEnter: () => dispatch(enter(sendSayApi))
+    onEnter: () => dispatch(try_auth(sendSayApi)(cookies))
   };
 };
 
 export default compose(
+  withCookies,
   withService,
-  connect(({ login, password }) => {
+  connect(({auth: { login, password }}) => {
     return {
       login, 
       password

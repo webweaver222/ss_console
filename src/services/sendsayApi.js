@@ -25,6 +25,32 @@ export default class SendSayApi {
         })
     }
 
+    try_pong = async (session) => {
+      return fetch(this._url , {
+        method: 'POST',
+            headers: {
+              'Accept': 'application/json'
+            },
+            body: this.getRequestBody({
+              session,
+              action: "pong",
+            })
+      })
+    }
+
+    logout = async (session) => {
+      return fetch(this._url , {
+        method: 'POST',
+            headers: {
+              'Accept': 'application/json'
+            },
+            body: this.getRequestBody({
+              session,
+              action: "logout",
+            })
+      })
+    }
+
 
     getRequestBody(req) {
       let requestBody = `apiversion=100&json=1`;
