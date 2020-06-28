@@ -1,4 +1,4 @@
-import React ,{useEffect} from 'react'
+import React ,{useEffect, useRef} from 'react'
 import { Route, Switch } from 'react-router-dom';
 import {connect} from 'react-redux'
 import { compose } from "../../utils";
@@ -16,7 +16,7 @@ import Preloader from '../preloader'
 
 
 
-const App = ({session_key, history, onMount,  fetching}) => {
+const App = ({session_key, history, onMount,  fetching, onMouseUp}) => {
 
     useEffect(() => {
         onMount()
@@ -40,10 +40,10 @@ const App = ({session_key, history, onMount,  fetching}) => {
             <Route path="/" exact component={Console}/>
     </Switch> : <Preloader height = {200} width = {200} color='LightBlue'/>
 
-
+   
  
     return (
-        <div className="app">
+        <div className="app" onMouseUp={onMouseUp}>
             {content}
         </div>
     )
@@ -51,7 +51,8 @@ const App = ({session_key, history, onMount,  fetching}) => {
 
 const mapDispatchToProps = (dispatch, {sendSayApi, cookies }) => {
     return {
-        onMount: () => dispatch(app_mount(sendSayApi)(cookies))
+        onMount: () => dispatch(app_mount(sendSayApi)(cookies)),
+        onMouseUp: () => dispatch('MOUSE_UP')
     }
 }
 

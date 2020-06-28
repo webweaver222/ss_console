@@ -51,6 +51,16 @@ export default class SendSayApi {
       })
     }
 
+    sendRequest = async (req) => {
+      return fetch(this._url, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: this.getRequestBody(req)
+    })
+    }
+
 
     getRequestBody(req) {
       let requestBody = `apiversion=100&json=1`;

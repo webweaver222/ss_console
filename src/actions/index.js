@@ -54,6 +54,24 @@ const app_mount = (sendsayApi) => (cookies) => async (dispatch) => {
 }
 
 
+const sendRequest = (sendsayApi) => async (dispatch, getState) => {
+    const {auth: {session_key}, ssconsole: {request}} = getState()
+
+    // check if json syntax valid
+
+    const obj = {
+        session: session_key,
+        ...JSON.parse(request)
+    }
+    
+    const res = await sendsayApi.sendRequest(obj)
+    const resBody = await res.json()
+
+    dispatch({type: 'CONSOLE_FETCH_SUCCESS' , payload : JSON.stringify(resBody)})
+
+
+}
+
 const logout = (sendsayApi) => (cookies) => async (dispatch) => {
 
     const session = cookies.get('session_key')
@@ -63,8 +81,27 @@ const logout = (sendsayApi) => (cookies) => async (dispatch) => {
     dispatch('LOGOUT')
 }
 
+const mouseMove = (e) => (dispatch , getState) => {
+    const {ssconsole: {isDragging, offset}} = getState()
+
+    if (!isDragging) {
+        return false
+    }
+
+    let pointerRelativeXpos = e.clientX - offset
+
+    const boxAminWidth = 60;
+
+    dispatch({type: 'CHANGE_BOX_STYLE', payload: {
+        width: (Math.max(boxAminWidth, pointerRelativeXpos - 24)) + 'px',
+        flexGrow: '0'
+    }})
+}
+
 export {
     try_auth,
     app_mount,
-    logout
+    logout,
+    mouseMove,
+    sendRequest
 }

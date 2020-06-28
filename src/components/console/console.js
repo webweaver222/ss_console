@@ -5,12 +5,13 @@ import { compose } from "../../utils";
 
 import ConsoleHeader from '../console-header'
 import ConsoleBody from '../ConsoleBody'
+import ConsoleFooter from '../ConsoleFooter'
 
 import { withCookies} from 'react-cookie';
 import withService from "../hoc/withService";
-import { logout} from '../../actions/index'
+import { logout, sendRequest} from '../../actions/index'
 
-const Console = ({onExit}) => {
+const Console = ({onExit, onSendRequest}) => {
 
     const initSize = {
         width: '60%',
@@ -39,6 +40,7 @@ const Console = ({onExit}) => {
         <div className="console" style={{width: size.width, height: size.height}}>
             <ConsoleHeader onExit = {onExit} onFscreen={onResize} resizeRender = {resizeBtn}/>
             <ConsoleBody />
+            <ConsoleFooter onSend={onSendRequest}/>
         </div>
     )
 }
@@ -50,7 +52,8 @@ const mapStateToProps = () => {
 
 const mapDispatchToProps = (dispatch , {sendSayApi, cookies} ) => {
     return bindActionCreators({
-        onExit:() => logout(sendSayApi)(cookies)
+        onExit: () => logout(sendSayApi)(cookies),
+        onSendRequest: () => sendRequest(sendSayApi)
     }, dispatch)
 }
  

@@ -1,60 +1,50 @@
-import React , {useState, useRef} from 'react';
-import PropTypes from 'prop-types';
+import React , {useEffect, useRef} from 'react';
 import { connect } from 'react-redux';
 
 
 import  './ConsoleBody.sass';
 import DragRsz from '../partials/drag-element'
+import {mouseMove} from '../../actions/index'
 
-const ConsoleBody = (props) => {
-
+const ConsoleBody = ({onDragStart, onUpdate, boxStyle, onMouseMove, request, onRequestBodyChange , response}) => {
 
 const bodyRef = useRef(null)
 
-const mouseDown = () => {
-  return setIsDragging(true)
-}
-/*
-document.addEventListener('mouseup', (e) => {
-  return setIsDragging(false)
-})
-
-document.addEventListener('mousemove', (e) => {
-  if (!isDragging) {
-    return false;
-  }
-
-  let containerOffsetLeft = bodyRef.current.offsetLeft;
-  console.log(isDragging);
-  console.log(containerOffsetLeft);
-})
-*/
+useEffect(() => {
+  onUpdate(bodyRef.current.offsetLeft)
+}, [])
 
 
+useEffect(() => {
+  onUpdate(bodyRef.current.offsetLeft)
+}, [boxStyle])
 
 return (
-  <div className="console-body" ref={bodyRef}>
-    <div className="req-section">
-        <textarea ></textarea>
+  <div className="console-body" ref={bodyRef} onMouseMove={onMouseMove}>
+    <div className="req-section" style={boxStyle}>
+        <textarea value={request} onChange={(e) => onRequestBodyChange(e.target.value)}></textarea>
     </div>
     <div className="separator">
-      <div className="drag-element" onMouseDown={mouseDown}>
+      <div className="drag-element" onMouseDown={onDragStart}>
         <DragRsz/>
         </div>
     </div>
     <div className="res-section">
-      <textarea readOnly={true}></textarea></div>
+      <textarea readOnly={true} value={response}></textarea></div>
   </div>
 );
 }
 
 
-const mapStateToProps = state => ({
-  // blabla: state.blabla,
+const mapStateToProps = ({ssconsole: {request, response, isDragging, boxStyle, offset}}) => ({
+  isDragging, boxStyle, offset, request, response
 });
 
 const mapDispatchToProps = dispatch => ({
-  // fnBlaBla: () => dispatch(action.name()),
+  onDragStart: () => dispatch('DRAG_START'),
+  onUpdate: x => dispatch({type: 'CHANGE_OFFSET', payload: x}),
+  onMouseMove: (e) => dispatch(mouseMove(e)),
+  onRequestBodyChange: (body) => dispatch({type: 'CHANGE_REQUEST_BODY', payload: body})
 });
 
 export default connect(
