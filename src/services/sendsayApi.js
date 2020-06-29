@@ -25,7 +25,7 @@ export default class SendSayApi {
         })
     }
 
-    try_pong = async (session) => {
+    re_auth = async (session) => {
       return fetch(this._url , {
         method: 'POST',
             headers: {
@@ -33,7 +33,8 @@ export default class SendSayApi {
             },
             body: this.getRequestBody({
               session,
-              action: "pong",
+              action: "sys.settings.get",
+              list: ["about.owner.email", "about.user"]
             })
       })
     }

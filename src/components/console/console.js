@@ -4,14 +4,16 @@ import { bindActionCreators } from 'redux'
 import { compose } from "../../utils";
 
 import ConsoleHeader from '../console-header'
+import ConsoleHistory from '../ConsoleHistory'
 import ConsoleBody from '../ConsoleBody'
 import ConsoleFooter from '../ConsoleFooter'
 
 import { withCookies} from 'react-cookie';
 import withService from "../hoc/withService";
-import { logout, sendRequest} from '../../actions/index'
+import { logout, sendRequest, formatRequest} from '../../actions/index'
 
-const Console = ({onExit, onSendRequest}) => {
+
+const Console = ({onExit, onSendRequest, onFormatRequest}) => {
 
     const initSize = {
         width: '60%',
@@ -39,21 +41,20 @@ const Console = ({onExit, onSendRequest}) => {
     return (  
         <div className="console" style={{width: size.width, height: size.height}}>
             <ConsoleHeader onExit = {onExit} onFscreen={onResize} resizeRender = {resizeBtn}/>
+            <ConsoleHistory/>
             <ConsoleBody />
-            <ConsoleFooter onSend={onSendRequest}/>
+            <ConsoleFooter onSend={onSendRequest} onFormat={onFormatRequest}/>
         </div>
     )
 }
 
-const mapStateToProps = () => {
-
-}
 
 
 const mapDispatchToProps = (dispatch , {sendSayApi, cookies} ) => {
     return bindActionCreators({
         onExit: () => logout(sendSayApi)(cookies),
-        onSendRequest: () => sendRequest(sendSayApi)
+        onSendRequest: () => sendRequest(sendSayApi),
+        onFormatRequest: () => dispatch(formatRequest)
     }, dispatch)
 }
  

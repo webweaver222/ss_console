@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux'
 
 import './console-header.sass'
 
@@ -7,7 +8,7 @@ import ExitBtn from '../partials/exit'
 import Fscreen from '../partials/fscreen'
 import Sscreen from '../partials/sscreen'
 
-const ConsoleHeader = ({onExit, onFscreen, resizeRender}) => {
+const ConsoleHeader = ({onExit, onFscreen, resizeRender, login}) => {
    
     const resize = resizeRender? <Sscreen/> : <Fscreen/>
 
@@ -18,7 +19,7 @@ const ConsoleHeader = ({onExit, onFscreen, resizeRender}) => {
         <h2>Api-console</h2>
         </div>
         <div className="right">
-            <span className="userInfo">fukirx@gmail.com <i>:</i> sublogin </span>
+            <span className="userInfo">{login}</span>
             <span className="exitSpan">Exit</span>
             <div className="exitBtn" onClick={onExit}>
             <ExitBtn />
@@ -30,4 +31,4 @@ const ConsoleHeader = ({onExit, onFscreen, resizeRender}) => {
     </div>
 }
  
-export default ConsoleHeader;
+export default connect(({auth: {login}}) => ({login}), null)(ConsoleHeader)

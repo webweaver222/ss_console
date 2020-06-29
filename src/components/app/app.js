@@ -19,6 +19,7 @@ import Preloader from '../preloader'
 const App = ({session_key, history, onMount,  fetching, onMouseUp}) => {
 
     useEffect(() => {
+      
         onMount()
 
         if (!session_key) {

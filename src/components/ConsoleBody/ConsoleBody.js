@@ -6,7 +6,7 @@ import  './ConsoleBody.sass';
 import DragRsz from '../partials/drag-element'
 import {mouseMove} from '../../actions/index'
 
-const ConsoleBody = ({onDragStart, onUpdate, boxStyle, onMouseMove, request, onRequestBodyChange , response}) => {
+const ConsoleBody = ({onDragStart, onUpdate, boxStyle, onMouseMove, request, onRequestBodyChange , response, validationFail}) => {
 
 const bodyRef = useRef(null)
 
@@ -36,8 +36,8 @@ return (
 }
 
 
-const mapStateToProps = ({ssconsole: {request, response, isDragging, boxStyle, offset}}) => ({
-  isDragging, boxStyle, offset, request, response
+const mapStateToProps = ({ssconsole: {request, response, isDragging, boxStyle, validationFail}}) => ({
+  isDragging, boxStyle, request, response, validationFail
 });
 
 const mapDispatchToProps = dispatch => ({

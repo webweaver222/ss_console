@@ -22,6 +22,15 @@ const v = {
             this.errors['password'].push('Passwrod cant contain cyrillic alphabet')
         }
 
+    },
+
+
+    validateJSON : function (string) { 
+        try {
+             return JSON.parse(string)
+        } catch (e) {
+            return null
+        }
     }
 }
 

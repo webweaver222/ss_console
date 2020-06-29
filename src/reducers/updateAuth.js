@@ -52,7 +52,8 @@ const initialAuth = {
         case 'APP_FETCH_SUCCESS': {
             return {
                 ...auth,
-                session_key: action.payload,
+                session_key: action.payload.session,
+                login: action.payload.email,
                 fetching:  false
             }
         }
@@ -104,10 +105,7 @@ const initialAuth = {
         }
 
         case 'LOGOUT': {
-           return {
-             ...auth,
-             session_key: null
-           }
+           return initialAuth
         }
 
   
