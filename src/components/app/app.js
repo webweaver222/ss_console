@@ -19,19 +19,12 @@ import Preloader from '../preloader'
 const App = ({session_key, history, onMount,  fetching, onMouseUp}) => {
 
     useEffect(() => {
-      
         onMount()
-
-        if (!session_key) {
-            history.push('/login')
-        } 
     } , [])
 
     useEffect(() => {
-        if (session_key) {
-            return history.push('/')
-        }
-        return history.push('/login')
+      console.log(session_key);
+
     }, [session_key])
 
 

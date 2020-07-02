@@ -21,7 +21,7 @@ const try_auth = sendsayApi => cookies => async (dispatch, getState) => {
   dispatch({ type: "AUTH_FETCH_START" });
   const res = await sendsayApi.authentication(reqData);
   const resBody = await res.json();
-  console.log(resBody);
+  
   if (!resBody.session) {
     return dispatch({
       type: "AUTH_FETCH_FAIL",
@@ -29,21 +29,21 @@ const try_auth = sendsayApi => cookies => async (dispatch, getState) => {
     });
   }
   cookies.set("session_key", resBody.session, { path: "/" });
-
   dispatch({ type: "AUTH_FETCH_SUCCESS", payload: resBody.session });
 };
 
 
 const app_mount = sendsayApi => cookies => async dispatch => {
+  console.log('1');
   dispatch("APP_FETCH_START");
-
   const session = cookies.get("session_key");
 
   if (session) {
+    
     const res = await sendsayApi.re_auth(session);
     const resBody = await res.json();
-    console.log(resBody);
     if (resBody.list['about.owner.email']) {
+     
       return dispatch({ type: "APP_FETCH_SUCCESS", payload: {
         session,
         email: resBody.list['about.owner.email']
@@ -59,28 +59,44 @@ const app_mount = sendsayApi => cookies => async dispatch => {
 const sendRequest = sendsayApi => async (dispatch, getState) => {
   const {
     auth: { session_key },
-    ssconsole: { request }
+    ssconsole: { request, history }
   } = getState();
 
   // check if json syntax valid
 
-    const requestObject = v.validateJSON(request)
+  const requestObject = v.validateJSON(request);
 
-    if (!requestObject) {
-        return dispatch('CONSOLE_VALID_FAIL')
-    }
+  if (!requestObject) {
+    return dispatch("CONSOLE_VALID_FAIL");
+  }
 
-    const res = await sendsayApi.sendRequest({
-        session: session_key,
-        ...requestObject
-      })
+  const res = await sendsayApi.sendRequest({
+    session: session_key,
+    ...requestObject
+  });
 
-    const resBody = await res.json();
+  const resBody = await res.json();
 
-    dispatch({
-      type: "CONSOLE_FETCH_SUCCESS",
-      payload: JSON.stringify(resBody , undefined, 2) })
+  dispatch({
+    type: "CONSOLE_FETCH_SUCCESS",
+    payload: JSON.stringify(resBody, undefined, 2)
+  });
+
   
+
+  const reqJSON = JSON.stringify(requestObject, undefined, 2);
+
+  if (history.findIndex(item => item.request === reqJSON) === -1) {
+    
+    dispatch({
+      type: "UNIQUE_REQUEST",
+      payload: {
+        request: reqJSON,
+        title: requestObject.action? requestObject.action: 'no-action',
+        success: !resBody.errors ? true : false
+      }
+    });
+  }
 };
 
 
@@ -89,7 +105,7 @@ const formatRequest = (dispatch, getState) => {
     ssconsole: { request }
   } = getState();
 
-  if (request === '') return
+  if (request === '') return null
 
   const requestObject = v.validateJSON(request)
 

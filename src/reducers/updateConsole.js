@@ -10,13 +10,39 @@ const initConsole = {
     }
 }
 
+const updateHistory = (list, newItem, idx) => {
+  if (list.length === 0)
+    return [
+      {
+        id: 0, 
+        ...newItem
+      },
+    ];
+
+  if (newItem === "remove") {
+    return [...list.slice(0, idx), ...list.slice(idx + 1)];
+  }
+
+  /*if (typeof idx === "number") {
+    return [...list.slice(0, idx), newAdress, ...list.slice(idx + 1)];
+  }*/
+
+  return [
+    {
+      id: Math.max(...list.map((p) => p.id), 0) + 1,
+      ...newItem,
+    },
+    ...list
+  ];
+};
+
 const updateConsole = ( state, action) => {
 
     if (typeof state === "undefined") {
         return  initConsole
       }
 
-      const {ssconsole, ssconsole:{boxStyle ,request}} = state
+      const {ssconsole, ssconsole:{boxStyle , history}} = state
 
       switch (action.type) {
 
@@ -86,6 +112,27 @@ const updateConsole = ( state, action) => {
             ...ssconsole,
             request: action.payload,
             validationFail: false
+          }
+        }
+
+        case 'UNIQUE_REQUEST' : {
+          return {
+            ...ssconsole,
+            history: updateHistory(history, action.payload)
+          }
+        }
+
+        case 'HISTORY_MOUNT': {
+          return {
+            ...ssconsole,
+            history: action.payload
+          }
+        }
+
+        case 'HISTORY_CLEAR' : {
+          return {
+            ...ssconsole,
+            history: initConsole.history 
           }
         }
 

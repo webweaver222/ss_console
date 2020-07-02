@@ -54,7 +54,7 @@ const mapDispatchToProps = (dispatch , {sendSayApi, cookies} ) => {
     return bindActionCreators({
         onExit: () => logout(sendSayApi)(cookies),
         onSendRequest: () => sendRequest(sendSayApi),
-        onFormatRequest: () => dispatch(formatRequest)
+        onFormatRequest: () => formatRequest
     }, dispatch)
 }
  

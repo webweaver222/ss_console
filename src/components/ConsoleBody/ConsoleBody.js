@@ -21,17 +21,24 @@ useEffect(() => {
 
 return (
   <div className="console-body" ref={bodyRef} onMouseMove={onMouseMove}>
-    <div className="req-section" style={boxStyle}>
-        <textarea value={request} onChange={(e) => onRequestBodyChange(e.target.value)}></textarea>
-    </div>
-    <div className="separator">
-      <div className="drag-element" onMouseDown={onDragStart}>
-        <DragRsz/>
+        
+          <div className="req-section" style={boxStyle}>
+              <textarea value={request} onChange={(e) => onRequestBodyChange(e.target.value)}/>
+          </div>
+        
+
+        <div className="separator">
+           <div className="drag-element" onMouseDown={onDragStart}>
+            <DragRsz/>
+            </div>
         </div>
-    </div>
-    <div className="res-section">
-      <textarea readOnly={true} value={response}></textarea></div>
-  </div>
+
+       
+          <div className="res-section">
+            <textarea readOnly={true} value={response}/>
+          </div>
+        </div>
+
 );
 }
 

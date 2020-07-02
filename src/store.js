@@ -4,12 +4,14 @@ import thunk from 'redux-thunk'
 import reducer from './reducers'
 
 const stringMdw = () => (dispatch) => (action) => {
-    console.log(action.type)
-    if (typeof action === 'string')
+    
+    if (typeof action === 'string') {
+        console.log(action);
     return dispatch({
         type: action
     })
-
+}
+console.log(action.type);
     return dispatch(action)
 }
 
