@@ -31,6 +31,7 @@ module.exports = (env = {}) => {
         mode: isProd? 'production': isDev && 'development',
 
         output: {
+            path: require('path').resolve(__dirname, 'build'),
             filename: isProd? 'main-[hash:8].js' : undefined,
             publicPath: '/'
         },
@@ -104,7 +105,7 @@ module.exports = (env = {}) => {
             open: true,
             port: 8000,
             historyApiFallback: true,
-            contentBase: './',
+            contentBase: './build',
             hot: true,
             openPage: ''
         }
