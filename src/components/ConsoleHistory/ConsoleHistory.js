@@ -5,14 +5,15 @@ import './ConsoleHistory.sass';
 import useDidMountEffect from '../customHooks/didMountEffect'
 
 import Clear from '../partials/clear'
-import DragElement from '../partials/drag-element'
+import HistoryBlock from '../HistoryBlock'
 
-const ConsoleHistory = ({ history, onMount, clearHistory }) => {
-  console.log(history);
+const ConsoleHistory = ({ history, onMount, clearHistory, onScrollHistory }) => {
+
   const list = useRef(null);
 
   const onScroll = e => {
     list.current.scrollLeft += e.deltaY * 0.3;
+    onScrollHistory(list.current.scrollLeft)
   };
 
   useEffect(() => {
@@ -27,26 +28,10 @@ const ConsoleHistory = ({ history, onMount, clearHistory }) => {
       localStorage.setItem('history' , JSON.stringify(history))
   }, [history])
 
-  const renderList = list => {
-    return list.map((item, idx) => {
+  const renderList = historyList => {
+    return historyList.map((item) => {
       return (
-        <div className="history-block" key={item.id}>
-            <div
-              className="indicator"
-              style={item.success ? null : { backgroundColor: "#CF2C00" }}
-            ></div>
-            <span>{item.title}</span>
-            <div className="options">
-              <DragElement />
-            </div>
-         
-            <ul className="dropdown">
-           
-                <li>Resend</li>
-                <li>Copy</li>
-                <li>Delete</li>
-            </ul>
-          </div>
+        <HistoryBlock item={item} key={item.id} list={list}/>
       );
     });
   };
@@ -76,6 +61,7 @@ const mapStateToProps = ({ssconsole: {history}}) => ({
 const mapDispatchToProps = dispatch => ({
   onMount: (history) => dispatch({type:'HISTORY_MOUNT' , payload: history}),
   clearHistory: () => dispatch('HISTORY_CLEAR'),
+  onScrollHistory: (delta) => dispatch({type: 'SCROLL_HISTORY', payload: delta})
 });
 
 export default connect(

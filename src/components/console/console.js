@@ -13,7 +13,7 @@ import withService from "../hoc/withService";
 import { logout, sendRequest, formatRequest} from '../../actions/index'
 
 
-const Console = ({onExit, onSendRequest, onFormatRequest}) => {
+const Console = ({onExit, onSendRequest, onFormatRequest, onResizeConsole}) => {
 
     const initSize = {
         width: '60%',
@@ -26,6 +26,7 @@ const Console = ({onExit, onSendRequest, onFormatRequest}) => {
     let resizeBtn = size.width !== initSize.width ? 'small': null
 
     const onResize = () => {
+
         if (size.width !== initSize.width) {
             return setSize(initSize)
         }
@@ -34,6 +35,8 @@ const Console = ({onExit, onSendRequest, onFormatRequest}) => {
             width: '100%',
             height: '100%'
        })
+
+       onResizeConsole()
 
     }
     
@@ -54,7 +57,8 @@ const mapDispatchToProps = (dispatch , {sendSayApi, cookies} ) => {
     return bindActionCreators({
         onExit: () => logout(sendSayApi)(cookies),
         onSendRequest: () => sendRequest(sendSayApi),
-        onFormatRequest: () => formatRequest
+        onFormatRequest: () => formatRequest,
+        onResizeConsole:() => dispatch('RESIZE_CONSOLE')
     }, dispatch)
 }
  

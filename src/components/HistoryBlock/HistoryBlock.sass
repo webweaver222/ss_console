@@ -1,0 +1,41 @@
+.history-block
+    background-color: #fff
+    padding: 10px
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1)
+    border-radius: 5px
+    display: flex
+    align-items: center
+    margin-right: 10px
+    .indicator
+        width: 10px
+        height: 10px
+        border-radius: 50%
+        background-color: #30B800
+        border: 1px solid rgba(0, 0, 0, 0.2)
+    span
+        font-size: 16px
+        margin: 0 10px 0 5px
+        cursor: default
+    .options
+        cursor: pointer
+    .dropdown
+        position: absolute
+        background-color: #fff
+        z-index: 30
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25)
+        border-radius: 3px
+        li
+            font-size: 16px
+            padding: 15px
+            cursor: pointer
+            &:hover
+                background-color: #0055FB
+        li:first-child
+            padding-bottom: 20px
+        li:last-child
+            border-top: 1px solid rgba(0, 0, 0, 0.2)
+            padding-top: 15px
+            &:hover
+                background-color: #CF2C00
+    &:hover 
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25)

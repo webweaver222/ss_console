@@ -21,7 +21,7 @@ const try_auth = sendsayApi => cookies => async (dispatch, getState) => {
   dispatch({ type: "AUTH_FETCH_START" });
   const res = await sendsayApi.authentication(reqData);
   const resBody = await res.json();
-  
+
   if (!resBody.session) {
     return dispatch({
       type: "AUTH_FETCH_FAIL",
@@ -32,37 +32,32 @@ const try_auth = sendsayApi => cookies => async (dispatch, getState) => {
   dispatch({ type: "AUTH_FETCH_SUCCESS", payload: resBody.session });
 };
 
-
 const app_mount = sendsayApi => cookies => async dispatch => {
-  console.log('1');
   dispatch("APP_FETCH_START");
   const session = cookies.get("session_key");
 
   if (session) {
-    
     const res = await sendsayApi.re_auth(session);
     const resBody = await res.json();
-    if (resBody.list['about.owner.email']) {
-     
-      return dispatch({ type: "APP_FETCH_SUCCESS", payload: {
-        session,
-        email: resBody.list['about.owner.email']
-      } });
+    if (resBody.list["about.owner.email"]) {
+      return dispatch({
+        type: "APP_FETCH_SUCCESS",
+        payload: {
+          session,
+          email: resBody.list["about.owner.email"]
+        }
+      });
     }
   }
 
-  dispatch({ type: "APP_FETCH_SUCCESS", payload: { session: null} });
+  dispatch({ type: "APP_FETCH_SUCCESS", payload: { session: null } });
 };
-
-
 
 const sendRequest = sendsayApi => async (dispatch, getState) => {
   const {
     auth: { session_key },
     ssconsole: { request, history }
   } = getState();
-
-  // check if json syntax valid
 
   const requestObject = v.validateJSON(request);
 
@@ -82,17 +77,14 @@ const sendRequest = sendsayApi => async (dispatch, getState) => {
     payload: JSON.stringify(resBody, undefined, 2)
   });
 
-  
-
   const reqJSON = JSON.stringify(requestObject, undefined, 2);
 
   if (history.findIndex(item => item.request === reqJSON) === -1) {
-    
     dispatch({
       type: "UNIQUE_REQUEST",
       payload: {
         request: reqJSON,
-        title: requestObject.action? requestObject.action: 'no-action',
+        title: requestObject.action ? requestObject.action : "no-action",
         success: !resBody.errors ? true : false
       }
     });
@@ -100,24 +92,32 @@ const sendRequest = sendsayApi => async (dispatch, getState) => {
 };
 
 
+const reSend = sendsayApi => req => async (dispatch, getState) => {
+  const res = await sendsayApi.sendRequest(req);
+  const resBody = await res.json();
+
+  dispatch({
+    type: "CONSOLE_FETCH_SUCCESS",
+    payload: JSON.stringify(resBody, undefined, 2)
+  });
+}
+
 const formatRequest = (dispatch, getState) => {
   const {
     ssconsole: { request }
   } = getState();
 
-  if (request === '') return null
+  if (request === "") return null;
 
-  const requestObject = v.validateJSON(request)
+  const requestObject = v.validateJSON(request);
 
   if (!requestObject) {
-    return dispatch('CONSOLE_VALID_FAIL')
+    return dispatch("CONSOLE_VALID_FAIL");
   }
 
   const formattedString = JSON.stringify(requestObject, undefined, 2);
-  dispatch({type: 'FORMAT_REQEST', payload: formattedString})
-}
-
-
+  dispatch({ type: "FORMAT_REQEST", payload: formattedString });
+};
 
 const logout = sendsayApi => cookies => async dispatch => {
   const session = cookies.get("session_key");
@@ -125,8 +125,6 @@ const logout = sendsayApi => cookies => async dispatch => {
   cookies.remove("session_key");
   dispatch("LOGOUT");
 };
-
-
 
 const mouseMove = e => (dispatch, getState) => {
   const {
@@ -150,4 +148,32 @@ const mouseMove = e => (dispatch, getState) => {
   });
 };
 
-export { try_auth, app_mount, logout, mouseMove, sendRequest, formatRequest };
+const copyRequest = id => (dispatch, getState) => {
+  const {
+    ssconsole: { history }
+  } = getState();
+
+  const idx = history.findIndex(item => item.id === id);
+
+  navigator.clipboard.writeText(history[idx].request).then(() => {
+    dispatch("COPIED");
+
+    const wait = () => new Promise(resolve => setTimeout(() => resolve(), 500));
+
+    wait().then(() => {
+      dispatch("COPIED");
+      dispatch("CLOSE_DROPDOWN");
+    });
+  });
+};
+
+export {
+  try_auth,
+  app_mount,
+  logout,
+  mouseMove,
+  sendRequest,
+  formatRequest,
+  copyRequest,
+  reSend
+};

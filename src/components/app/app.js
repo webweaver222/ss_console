@@ -16,14 +16,14 @@ import Preloader from '../preloader'
 
 
 
-const App = ({session_key, history, onMount,  fetching, onMouseUp}) => {
+const App = ({session_key, onMount,  fetching, onMouseUp, onAppClick}) => {
 
     useEffect(() => {
         onMount()
     } , [])
 
     useEffect(() => {
-      console.log(session_key);
+     
 
     }, [session_key])
 
@@ -37,7 +37,7 @@ const App = ({session_key, history, onMount,  fetching, onMouseUp}) => {
    
  
     return (
-        <div className="app" onMouseUp={onMouseUp}>
+        <div className="app" onMouseUp={onMouseUp} onClick={onAppClick}>
             {content}
         </div>
     )
@@ -46,7 +46,8 @@ const App = ({session_key, history, onMount,  fetching, onMouseUp}) => {
 const mapDispatchToProps = (dispatch, {sendSayApi, cookies }) => {
     return {
         onMount: () => dispatch(app_mount(sendSayApi)(cookies)),
-        onMouseUp: () => dispatch('MOUSE_UP')
+        onMouseUp: () => dispatch('MOUSE_UP'),
+        onAppClick: () => dispatch('CLOSE_DROPDOWN')
     }
 }
 

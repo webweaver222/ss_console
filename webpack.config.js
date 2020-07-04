@@ -105,7 +105,7 @@ module.exports = (env = {}) => {
             open: true,
             port: 8000,
             historyApiFallback: true,
-            contentBase: './build',
+            contentBase: isProd? './build' : './',
             hot: true,
             openPage: ''
         }

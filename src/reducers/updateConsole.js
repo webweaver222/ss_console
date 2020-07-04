@@ -2,9 +2,11 @@ const initConsole = {
     request: '',
     response: '',
     history: [],
+    dropdown: null,
+    copied: false,
     isDragging: false,
     validationFail: false,
-    offset: null,
+    scrollDelta: 0,
     boxStyle: {
      
     }
@@ -42,7 +44,7 @@ const updateConsole = ( state, action) => {
         return  initConsole
       }
 
-      const {ssconsole, ssconsole:{boxStyle , history}} = state
+      const {ssconsole, ssconsole:{boxStyle , history, copied}} = state
 
       switch (action.type) {
 
@@ -135,6 +137,45 @@ const updateConsole = ( state, action) => {
             history: initConsole.history 
           }
         }
+
+
+        case 'SHOW_DROPDOWN': {
+          return {
+            ...ssconsole,
+            dropdown: action.payload
+          }
+        }
+
+        case 'SCROLL_HISTORY': {
+          return {
+            ...ssconsole,
+            dropdown: null,
+            scrollDelta: action.payload
+          }
+        }
+
+        case 'CLOSE_DROPDOWN' : {
+          return {
+            ...ssconsole,
+            dropdown: null
+          }
+        }
+
+        case 'RESIZE_CONSOLE' : {
+          return {
+            ...ssconsole,
+            dropdown: null,
+            scrollDelta: 0
+          }
+        }
+
+        case 'COPIED': {
+          return {
+            ...ssconsole,
+            copied: !copied
+          }
+        }
+
 
         default:
         return ssconsole
