@@ -1,4 +1,4 @@
-import React ,{useEffect, useRef} from 'react'
+import React ,{useEffect, useState} from 'react'
 import { Route, Switch } from 'react-router-dom';
 import {connect} from 'react-redux'
 import { compose } from "../../utils";
@@ -17,7 +17,12 @@ import Preloader from '../preloader'
 
 
 
-const App = ({session_key, onMount,  fetching, onMouseUp, onAppClick}) => {
+const App = ({session_key, onMount,  fetching, onMouseUp, onAppClick, history}) => {
+
+    const [style, setStyle] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight
+    })
 
     useEffect(() => {
         onMount()
@@ -25,7 +30,11 @@ const App = ({session_key, onMount,  fetching, onMouseUp, onAppClick}) => {
 
     useDidMountEffect(() => {
      
+        if (!session_key) {
+           return history.push('/login')
+        }
 
+        history.push('/')
     }, [session_key])
 
 
@@ -38,7 +47,7 @@ const App = ({session_key, onMount,  fetching, onMouseUp, onAppClick}) => {
    
  
     return (
-        <div className="app" onMouseUp={onMouseUp} onClick={onAppClick}>
+        <div className="app" onMouseUp={onMouseUp} onClick={onAppClick} style={style} >
             {content}
         </div>
     )

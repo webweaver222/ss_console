@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux'
 import { compose } from "../../utils";
@@ -17,7 +17,7 @@ const Console = ({onExit, onSendRequest, onFormatRequest, onResizeConsole}) => {
 
     const initSize = {
         width: '60%',
-        height: '50%'
+        height: '60%'
     }
 
 

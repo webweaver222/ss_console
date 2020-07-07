@@ -45,7 +45,7 @@ const LoginContainer = ({
             type="text"
             className = {valid_errors.hasOwnProperty('login')? 'input-error': ''}
             name="login"
-            value={login}
+            value={login || ''}
             onChange={e => changeLog(e.target.value)}
           />
         </div>
@@ -55,7 +55,7 @@ const LoginContainer = ({
             type="password"
             className={valid_errors.hasOwnProperty('password')? 'input-error': null}
             name="pass"
-            value={password}
+            value={password || ''}
             onChange={e => changePass(e.target.value)}
           />
         </div>

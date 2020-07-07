@@ -64,6 +64,7 @@ const sendRequest = sendsayApi => async (dispatch, getState) => {
   if (!requestObject) {
     return dispatch("CONSOLE_VALID_FAIL");
   }
+  
 
   const res = await sendsayApi.sendRequest({
     session: session_key,
@@ -92,8 +93,16 @@ const sendRequest = sendsayApi => async (dispatch, getState) => {
 };
 
 
-const reSend = sendsayApi => req => id => async (dispatch) => {
-  const res = await sendsayApi.sendRequest(req);
+const reSend = sendsayApi => req => id => async (dispatch, getState) => {
+
+  const {
+    auth: { session_key },
+  } = getState();
+  
+  const res = await sendsayApi.sendRequest({
+    session: session_key,
+    ...JSON.parse(req)
+  });
   const resBody = await res.json();
 
 

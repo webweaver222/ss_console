@@ -183,7 +183,11 @@ const updateConsole = ( state, action) => {
           return {
             ...ssconsole,
             dropdown: null,
-            scrollDelta: 0
+            scrollDelta: 0,
+            boxStyle: {
+              flex: '1 1 auto',
+              flexGrow: "auto"
+            }
           }
         }
 
@@ -192,6 +196,11 @@ const updateConsole = ( state, action) => {
             ...ssconsole,
             copied: !copied
           }
+        }
+
+        case 'LOGOUT': {
+          return initConsole
+          
         }
 
 

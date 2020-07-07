@@ -1,8 +1,9 @@
 const initialAuth = {
-    session_key: null,
+    session_key: undefined,
     login: '',
     password: '',
     fetching: false,
+    login_fetching: false,
     auth_error: null,
     valid_errors: {}
   };
@@ -50,6 +51,7 @@ const initialAuth = {
         }
     
         case 'APP_FETCH_SUCCESS': {
+         
             return {
                 ...auth,
                 session_key: action.payload.session,
@@ -75,7 +77,7 @@ const initialAuth = {
         case 'AUTH_FETCH_START': {
           return {
             ...auth,
-            fetching: true,
+            login_fetching: true,
             valid_errors: {},
           }
         }
@@ -83,7 +85,7 @@ const initialAuth = {
         case 'AUTH_FETCH_SUCCESS': {
           return {
             ...auth,
-            fetching: false,
+            login_fetching: false,
             session_key: action.payload
             
           }
@@ -92,7 +94,7 @@ const initialAuth = {
         case 'AUTH_FETCH_FAIL': {
           return {
             ...auth,
-            fetching: false,
+            login_fetching: false,
             auth_error: action.payload
           }
         }

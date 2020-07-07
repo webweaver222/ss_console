@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from "react-redux";
 
 
@@ -7,11 +7,11 @@ import Logo from '../partials/logo'
 
 
 
-const Login = ({render, fetching, auth_error, valid_errors}) => {
+const Login = ({render, login_fetching, auth_error, valid_errors}) => {
 
   let preloader; 
 
-   if (fetching) {
+   if (login_fetching) {
         preloader = <Preloader/>
    }
 
@@ -26,9 +26,9 @@ const Login = ({render, fetching, auth_error, valid_errors}) => {
    );
 }
  
-export default connect(({auth: {fetching, auth_error, valid_errors}}) => {
+export default connect(({auth: {login_fetching, auth_error, valid_errors}}) => {
     return {
-        fetching,
+        login_fetching,
         auth_error,
         valid_errors
     }

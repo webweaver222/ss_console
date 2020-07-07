@@ -1,12 +1,16 @@
 import React , {useEffect, useRef} from 'react';
 import { connect } from 'react-redux';
+import {compose} from '../../utils'
+import useDidMountEffect from '../customHooks/didMountEffect'
 
 
+
+import withResizeEvents from '../hoc/withResizeEvents'
 import  './ConsoleBody.sass';
 import DragRsz from '../partials/drag-element'
-import {mouseMove} from '../../actions/index'
 
-const ConsoleBody = ({onDragStart, onUpdate, boxStyle, onMouseMove, request, onRequestBodyChange , response, validationFail}) => {
+
+const ConsoleBody = ({onDragStart, onUpdate, boxStyle, onMouseMove, request, onRequestBodyChange , response}) => {
 
 const bodyRef = useRef(null)
 
@@ -15,7 +19,7 @@ useEffect(() => {
 }, [])
 
 
-useEffect(() => {
+useDidMountEffect(() => {
   onUpdate(bodyRef.current.offsetLeft)
 }, [boxStyle])
 
@@ -43,18 +47,18 @@ return (
 }
 
 
-const mapStateToProps = ({ssconsole: {request, response, isDragging, boxStyle, validationFail}}) => ({
-  isDragging, boxStyle, request, response, validationFail
-});
+const mapStateToProps = ({ssconsole: {request, response}}) => ({
+  request, response
+})
 
 const mapDispatchToProps = dispatch => ({
-  onDragStart: () => dispatch('DRAG_START'),
-  onUpdate: x => dispatch({type: 'CHANGE_OFFSET', payload: x}),
-  onMouseMove: (e) => dispatch(mouseMove(e)),
   onRequestBodyChange: (body) => dispatch({type: 'CHANGE_REQUEST_BODY', payload: body})
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ConsoleBody);
+export default compose(
+  withResizeEvents,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps)
+)(ConsoleBody)
+
