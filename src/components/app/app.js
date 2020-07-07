@@ -7,6 +7,7 @@ import { app_mount} from '../../actions/index'
 import { withCookies} from 'react-cookie';
 import {withRouter} from 'react-router-dom';
 import withService from "../hoc/withService";
+import useDidMountEffect from '../customHooks/didMountEffect'
 
 import './app.sass'
 
@@ -22,7 +23,7 @@ const App = ({session_key, onMount,  fetching, onMouseUp, onAppClick}) => {
         onMount()
     } , [])
 
-    useEffect(() => {
+    useDidMountEffect(() => {
      
 
     }, [session_key])

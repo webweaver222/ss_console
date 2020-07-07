@@ -138,6 +138,24 @@ const updateConsole = ( state, action) => {
           }
         }
 
+        case 'HISTORY_BLOCK_SELECT': {
+          const idx = history.findIndex(item=>item.id === action.payload)
+          return {
+            ...ssconsole,
+            request: history[idx].request
+          }
+        }
+
+        case 'DELETE_REQ': {
+          debugger
+          const idx = history.findIndex(item=>item.id === action.payload)
+
+          return {
+            ...ssconsole,
+            history: updateHistory(history, 'remove', idx)
+          }
+        }
+
 
         case 'SHOW_DROPDOWN': {
           return {

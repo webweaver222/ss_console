@@ -92,9 +92,10 @@ const sendRequest = sendsayApi => async (dispatch, getState) => {
 };
 
 
-const reSend = sendsayApi => req => async (dispatch, getState) => {
+const reSend = sendsayApi => req => id => async (dispatch) => {
   const res = await sendsayApi.sendRequest(req);
   const resBody = await res.json();
+
 
   dispatch({
     type: "CONSOLE_FETCH_SUCCESS",
