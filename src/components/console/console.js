@@ -1,69 +1,77 @@
-import React, {  useState } from 'react';
+import React, { useState } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from "redux";
 import { compose } from "../../utils";
 
-import ConsoleHeader from '../console-header'
-import ConsoleHistory from '../ConsoleHistory'
-import ConsoleBody from '../ConsoleBody'
-import ConsoleFooter from '../ConsoleFooter'
+import ConsoleHeader from "../console-header";
+import ConsoleOptions from "../ConsoleOptions";
+import ConsoleHistory from "../ConsoleHistory";
+import ConsoleSwitch from "../ConsoleSwitch";
+import ConsoleBody from "../ConsoleBody";
+import ConsoleFooter from "../ConsoleFooter";
 
-import { withCookies} from 'react-cookie';
+import { withCookies } from "react-cookie";
 import withService from "../hoc/withService";
-import { logout, sendRequest, formatRequest} from '../../actions/index'
+import { logout, sendRequest, formatRequest } from "../../actions/index";
 
+const Console = ({
+  onExit,
+  onSendRequest,
+  onFormatRequest,
+  onResizeConsole,
+}) => {
+  const initSize = {
+    width: "60%",
+    height: "70%",
+  };
 
-const Console = ({onExit, onSendRequest, onFormatRequest, onResizeConsole}) => {
+  const [size, setSize] = useState(initSize);
 
-    const initSize = {
-        width: '60%',
-        height: '60%'
+  let resizeBtn = size.width !== initSize.width ? "small" : null;
+
+  const onResize = () => {
+    if (size.width !== initSize.width) {
+      return setSize(initSize);
     }
 
+    setSize({
+      width: "100%",
+      height: "100%",
+    });
 
-    const [size, setSize] = useState(initSize)
+    onResizeConsole();
+  };
 
-    let resizeBtn = size.width !== initSize.width ? 'small': null
+  return (
+    <div className="console" style={{ width: size.width, height: size.height }}>
+      <ConsoleHeader
+        onExit={onExit}
+        onFscreen={onResize}
+        resizeRender={resizeBtn}
+      />
+      <ConsoleOptions />
+      <ConsoleHistory />
+      <ConsoleSwitch />
+      <ConsoleBody />
+      <ConsoleFooter onSend={onSendRequest} onFormat={onFormatRequest} />
+    </div>
+  );
+};
 
-    const onResize = () => {
+const mapDispatchToProps = (dispatch, { sendSayApi, cookies }) => {
+  return bindActionCreators(
+    {
+      onExit: () => logout(sendSayApi)(cookies),
+      onSendRequest: () => sendRequest(sendSayApi),
+      onFormatRequest: () => formatRequest,
+      onResizeConsole: () => dispatch("RESIZE_CONSOLE"),
+    },
+    dispatch
+  );
+};
 
-        if (size.width !== initSize.width) {
-            return setSize(initSize)
-        }
-        
-        setSize({
-            width: '100%',
-            height: '100%'
-       })
-
-       onResizeConsole()
-
-    }
-    
-
-    return (  
-        <div className="console" style={{width: size.width, height: size.height}}>
-            <ConsoleHeader onExit = {onExit} onFscreen={onResize} resizeRender = {resizeBtn}/>
-            <ConsoleHistory/>
-            <ConsoleBody />
-            <ConsoleFooter onSend={onSendRequest} onFormat={onFormatRequest}/>
-        </div>
-    )
-}
-
-
-
-const mapDispatchToProps = (dispatch , {sendSayApi, cookies} ) => {
-    return bindActionCreators({
-        onExit: () => logout(sendSayApi)(cookies),
-        onSendRequest: () => sendRequest(sendSayApi),
-        onFormatRequest: () => formatRequest,
-        onResizeConsole:() => dispatch('RESIZE_CONSOLE')
-    }, dispatch)
-}
- 
 export default compose(
-    withService,
-    withCookies,
-    connect(null, mapDispatchToProps)
-)(Console)
+  withService,
+  withCookies,
+  connect(null, mapDispatchToProps)
+)(Console);
