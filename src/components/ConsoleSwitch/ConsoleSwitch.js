@@ -1,13 +1,14 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 
 import "./ConsoleSwitch.sass";
 
-const ConsoleSwitch = (props) => {
+const ConsoleSwitch = ({ clickToggle }) => {
   const [showBodyNotHeaders, toggleShow] = useState(true);
 
-  const clickToggle = () => {
+  /*const clickToggle = () => {
     return showBodyNotHeaders ? toggleShow(false) : toggleShow(true);
-  };
+  };*/
 
   return (
     <div className="ConsoleSwitch">
@@ -27,4 +28,9 @@ const ConsoleSwitch = (props) => {
   );
 };
 
-export default ConsoleSwitch;
+export default connect(
+  () => ({}),
+  (dispatch) => ({
+    clickToggle: () => dispatch("TOGGLE_REQUEST_TYPE"),
+  })
+)(ConsoleSwitch);
