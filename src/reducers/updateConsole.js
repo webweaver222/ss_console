@@ -114,14 +114,6 @@ const updateConsole = (state, action) => {
       };
     }
 
-    case "HISTORY_BLOCK_SELECT": {
-      const idx = history.findIndex((item) => item.id === action.payload);
-      return {
-        ...ssconsole,
-        request: history[idx].request,
-      };
-    }
-
     case "DELETE_REQ": {
       const idx = history.findIndex((item) => item.id === action.payload);
 
@@ -150,6 +142,7 @@ const updateConsole = (state, action) => {
       return {
         ...ssconsole,
         dropdown: null,
+        copied: initConsole.copied,
       };
     }
 

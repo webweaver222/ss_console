@@ -20,21 +20,17 @@ const Console = ({
   onFormatRequest,
   onResizeConsole,
 }) => {
-  const initSize = {
-    width: "60%",
-    height: "70%",
-  };
+  const [consoleSize, setSize] = useState({});
 
-  const [size, setSize] = useState(initSize);
-
-  let resizeBtn = size.width !== initSize.width ? "small" : null;
+  let resizeBtn = Object.keys(consoleSize).length !== 0 && "small";
 
   const onResize = () => {
-    if (size.width !== initSize.width) {
-      return setSize(initSize);
+    if (Object.keys(consoleSize).length !== 0) {
+      return setSize({});
     }
 
     setSize({
+      maxWidth: "100%",
       width: "100%",
       height: "100%",
     });
@@ -43,7 +39,7 @@ const Console = ({
   };
 
   return (
-    <div className="console" style={{ width: size.width, height: size.height }}>
+    <div className="console" style={consoleSize}>
       <ConsoleHeader
         onExit={onExit}
         onFscreen={onResize}

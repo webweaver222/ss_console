@@ -6,6 +6,7 @@ const send = (api) => (request_id) => async (dispatch, getState) => {
   } = getState();
 
   if (request_id) {
+    // if we take req from history
     const itemIdx = history.findIndex((item) => item.id === request_id);
     const historyItem = history[itemIdx];
 
@@ -49,25 +50,6 @@ const send = (api) => (request_id) => async (dispatch, getState) => {
     console.log(e, "send error11");
   }
 };
-
-//const reSend
-
-/*const reSend = (sendsayApi) => (req) => (id) => async (dispatch, getState) => {
-  const {
-    auth: { session_key },
-  } = getState();
-
-  const res = await sendsayApi.sendRequest({
-    session: session_key,
-    ...JSON.parse(req),
-  });
-  const resBody = await res.json();
-
-  dispatch({
-    type: "CONSOLE_FETCH_SUCCESS",
-    payload: JSON.stringify(resBody, undefined, 2),
-  });
-};*/
 
 const formatRequest = (dispatch, getState) => {
   const {

@@ -15,7 +15,6 @@ const HistoryBlock = ({
   onCopy,
   onDelete,
   copied,
-  onBlockClick,
 }) => {
   const historyBlock = useRef(null);
 
@@ -56,11 +55,7 @@ const HistoryBlock = ({
   );
 
   return (
-    <div
-      className="history-block"
-      ref={historyBlock}
-      onClick={() => onBlockClick(item.id)}
-    >
+    <div className="history-block" ref={historyBlock}>
       <div
         className="indicator"
         style={{ backgroundColor: !item.success && "#CF2C00" }}
@@ -106,7 +101,6 @@ const mapDispatchToProps = (dispatch, { sendSayApi }) => ({
   onResend: (id) => dispatch(send(sendSayApi)(id)),
   onDelete: (id) => dispatch({ type: "DELETE_REQ", payload: id }),
   onCopy: (id) => dispatch(copyRequest(id)),
-  onBlockClick: (id) => dispatch({ type: "HISTORY_BLOCK_SELECT", payload: id }),
 });
 
 export default withService(

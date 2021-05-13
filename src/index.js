@@ -3,7 +3,6 @@ import ReactDom from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import "./resources/vars.sass";
 import "./resources/reset.sass";
 import "./resources/main.sass";
 
@@ -11,7 +10,6 @@ import ErrorBoundry from "./components/error-boundry";
 import { ServiceProvider } from "./components/service-provider";
 import App from "./components/app";
 
-import SendSayApi from "./services/sendsayApi";
 import RequestApi from "./services/api";
 import store from "./store";
 
@@ -29,5 +27,3 @@ ReactDom.render(
   </Provider>,
   document.getElementById("root")
 );
-
-import "./resources/media.sass";
