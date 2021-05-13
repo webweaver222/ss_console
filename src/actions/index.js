@@ -1,144 +1,101 @@
-import v from "../services/validator";
+import { validateJSON, destrUrlString, isUnique } from "../services/helpers";
 
-const try_auth = sendsayApi => cookies => async (dispatch, getState) => {
-  const {
-    auth: { login, password }
+const send = (api) => (request_id) => async (dispatch, getState) => {
+  let {
+    ssconsole: { request: body, url, headers, method, history },
   } = getState();
 
-  const reqData = {
-    action: "login",
-    login: login,
-    sublogin: null,
-    passwd: password
-  };
+  if (request_id) {
+    const itemIdx = history.findIndex((item) => item.id === request_id);
+    const historyItem = history[itemIdx];
 
-  v.validateEnter(reqData);
-
-  if (Object.keys(v.errors).length > 0) {
-    return dispatch({ type: "VALIDATION_FAIL", payload: v.errors });
+    body = historyItem.request;
+    headers = historyItem.headers;
+    url = historyItem.title;
+    method = historyItem.method;
   }
 
-  dispatch({ type: "AUTH_FETCH_START" });
-  const res = await sendsayApi.authentication(reqData);
-  const resBody = await res.json();
+  const bodyObject = validateJSON(body);
+  const headersObject = validateJSON(headers);
 
-  if (!resBody.session) {
-    return dispatch({
-      type: "AUTH_FETCH_FAIL",
-      payload: JSON.stringify(resBody.errors[0])
+  if (!headersObject || !bodyObject) return dispatch("CONSOLE_VALID_FAIL");
+
+  const request = api.prepareRequest(method, url);
+
+  try {
+    const res = await request(headersObject, bodyObject);
+
+    dispatch({
+      type: "CONSOLE_FETCH_SUCCESS",
+      payload: JSON.stringify(await res.json(), undefined, 2),
     });
-  }
-  cookies.set("session_key", resBody.session, { path: "/" });
-  dispatch({ type: "AUTH_FETCH_SUCCESS", payload: resBody.session });
-};
 
-const app_mount = sendsayApi => cookies => async dispatch => {
-  dispatch("APP_FETCH_START");
-  const session = cookies.get("session_key");
-
-  if (session) {
-    const res = await sendsayApi.re_auth(session);
-    const resBody = await res.json();
-    if (resBody.list["about.owner.email"]) {
-      return dispatch({
-        type: "APP_FETCH_SUCCESS",
+    if (isUnique(history, url, headers, body, method)) {
+      const [domain, path] = destrUrlString(url);
+      dispatch({
+        type: "UNIQUE_REQUEST",
         payload: {
-          session,
-          email: resBody.list["about.owner.email"]
-        }
+          request: body,
+          headers,
+          title: url,
+          domain,
+          path,
+          method,
+          success: res.ok,
+        },
       });
     }
+  } catch (e) {
+    console.log(e, "send error11");
   }
-
-  dispatch({ type: "APP_FETCH_SUCCESS", payload: { session: null } });
 };
 
-const sendRequest = sendsayApi => async (dispatch, getState) => {
+//const reSend
+
+/*const reSend = (sendsayApi) => (req) => (id) => async (dispatch, getState) => {
   const {
     auth: { session_key },
-    ssconsole: { request, history }
   } = getState();
-
-  const requestObject = v.validateJSON(request);
-
-  if (!requestObject) {
-    return dispatch("CONSOLE_VALID_FAIL");
-  }
-  
 
   const res = await sendsayApi.sendRequest({
     session: session_key,
-    ...requestObject
+    ...JSON.parse(req),
   });
-
   const resBody = await res.json();
 
   dispatch({
     type: "CONSOLE_FETCH_SUCCESS",
-    payload: JSON.stringify(resBody, undefined, 2)
+    payload: JSON.stringify(resBody, undefined, 2),
   });
-
-  const reqJSON = JSON.stringify(requestObject, undefined, 2);
-
-  if (history.findIndex(item => item.request === reqJSON) === -1) {
-    dispatch({
-      type: "UNIQUE_REQUEST",
-      payload: {
-        request: reqJSON,
-        title: requestObject.action ? requestObject.action : "no-action",
-        success: !resBody.errors ? true : false
-      }
-    });
-  }
-};
-
-
-const reSend = sendsayApi => req => id => async (dispatch, getState) => {
-
-  const {
-    auth: { session_key },
-  } = getState();
-  
-  const res = await sendsayApi.sendRequest({
-    session: session_key,
-    ...JSON.parse(req)
-  });
-  const resBody = await res.json();
-
-
-  dispatch({
-    type: "CONSOLE_FETCH_SUCCESS",
-    payload: JSON.stringify(resBody, undefined, 2)
-  });
-}
+};*/
 
 const formatRequest = (dispatch, getState) => {
   const {
-    ssconsole: { request }
+    ssconsole: { request, headers },
   } = getState();
 
-  if (request === "") return null;
+  const requestObject = validateJSON(request);
+  const headersObject = validateJSON(headers);
 
-  const requestObject = v.validateJSON(request);
-
-  if (!requestObject) {
+  if (!requestObject || !headersObject) {
     return dispatch("CONSOLE_VALID_FAIL");
   }
 
-  const formattedString = JSON.stringify(requestObject, undefined, 2);
-  dispatch({ type: "FORMAT_REQEST", payload: formattedString });
+  const formattedReq = JSON.stringify(requestObject, undefined, 2);
+  const formattedHeaders = JSON.stringify(headersObject, undefined, 2);
+
+  dispatch({
+    type: "FORMAT_REQEST",
+    payload: {
+      formattedReq,
+      formattedHeaders,
+    },
+  });
 };
 
-const logout = sendsayApi => cookies => async dispatch => {
-  const session = cookies.get("session_key");
-  await sendsayApi.logout(session);
-  cookies.remove("session_key");
-  dispatch("LOGOUT");
-};
-
-const mouseMove = e => (dispatch, getState) => {
+const mouseMove = (e) => (dispatch, getState) => {
   const {
-    ssconsole: { isDragging, offset }
+    mouseEvents: { isDragging, offset },
   } = getState();
 
   if (!isDragging) {
@@ -153,37 +110,28 @@ const mouseMove = e => (dispatch, getState) => {
     type: "CHANGE_BOX_STYLE",
     payload: {
       width: Math.max(boxAminWidth, pointerRelativeXpos - 24) + "px",
-      flexGrow: "0"
-    }
+      flexGrow: "0",
+    },
   });
 };
 
-const copyRequest = id => (dispatch, getState) => {
+const copyRequest = (id) => (dispatch, getState) => {
   const {
-    ssconsole: { history }
+    ssconsole: { history },
   } = getState();
 
-  const idx = history.findIndex(item => item.id === id);
+  const idx = history.findIndex((item) => item.id === id);
 
-  navigator.clipboard.writeText(history[idx].request).then(() => {
-    dispatch("COPIED");
+  const { method, headers, request, title } = history[idx];
 
-    const wait = () => new Promise(resolve => setTimeout(() => resolve(), 500));
+  console.log(history[idx]);
 
-    wait().then(() => {
-      dispatch("COPIED");
-      dispatch("CLOSE_DROPDOWN");
-    });
-  });
+  dispatch("COPIED");
+
+  dispatch({ type: "CHANGE_REQUEST_METHOD", payload: method });
+  dispatch({ type: "CHANGE_REQUEST_HEADERS", payload: headers });
+  dispatch({ type: "CHANGE_REQUEST_BODY", payload: request });
+  dispatch({ type: "CHANGE_REQUEST_URL", payload: title });
 };
 
-export {
-  try_auth,
-  app_mount,
-  logout,
-  mouseMove,
-  sendRequest,
-  formatRequest,
-  copyRequest,
-  reSend
-};
+export { mouseMove, formatRequest, copyRequest, send };
