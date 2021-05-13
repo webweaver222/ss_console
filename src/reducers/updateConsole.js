@@ -1,39 +1,17 @@
+import { updateHistory } from "./helpers";
+
 const initConsole = {
-  request: "",
+  request: '{"name" : "alex", "job" : "janitor"}',
+  headers: '{"Accept": "*/*", "Content-Type": "application/json"}',
   response: "",
+  url: "https://reqres.in/api/users",
+  method: "GET",
   history: [],
   dropdown: null,
   copied: false,
-  isDragging: false,
   validationFail: false,
   scrollDelta: 0,
-  boxStyle: {},
-};
-
-const updateHistory = (list, newItem, idx) => {
-  if (list.length === 0)
-    return [
-      {
-        id: 0,
-        ...newItem,
-      },
-    ];
-
-  if (newItem === "remove") {
-    return [...list.slice(0, idx), ...list.slice(idx + 1)];
-  }
-
-  /*if (typeof idx === "number") {
-    return [...list.slice(0, idx), newAdress, ...list.slice(idx + 1)];
-  }*/
-
-  return [
-    {
-      id: Math.max(...list.map((p) => p.id), 0) + 1,
-      ...newItem,
-    },
-    ...list,
-  ];
+  requestType: "body",
 };
 
 const updateConsole = (state, action) => {
@@ -43,38 +21,36 @@ const updateConsole = (state, action) => {
 
   const {
     ssconsole,
-    ssconsole: { boxStyle, history, copied },
+    ssconsole: { boxStyle, history, copied, requestType },
   } = state;
 
   switch (action.type) {
-    case "DRAG_START": {
+    case "CHANGE_REQUEST_METHOD": {
       return {
         ...ssconsole,
-        isDragging: true,
+        method: action.payload,
       };
     }
 
-    case "MOUSE_UP": {
+    case "TOGGLE_REQUEST_TYPE": {
       return {
         ...ssconsole,
-        isDragging: false,
+        requestType:
+          requestType === initConsole.requestType ? "headers" : "body",
       };
     }
 
-    case "CHANGE_OFFSET": {
+    case "CHANGE_REQUEST_HEADERS": {
       return {
         ...ssconsole,
-        offset: action.payload,
+        headers: action.payload,
       };
     }
 
-    case "CHANGE_BOX_STYLE": {
+    case "CHANGE_REQUEST_URL": {
       return {
         ...ssconsole,
-        boxStyle: {
-          ...boxStyle,
-          ...action.payload,
-        },
+        url: action.payload,
       };
     }
 
@@ -111,7 +87,8 @@ const updateConsole = (state, action) => {
     case "FORMAT_REQEST": {
       return {
         ...ssconsole,
-        request: action.payload,
+        request: action.payload.formattedReq,
+        headers: action.payload.formattedHeaders,
         validationFail: false,
       };
     }

@@ -13,8 +13,12 @@ const ConsoleBody = ({
   boxStyle,
   onMouseMove,
   request,
+  headers,
+  onHeadersBodyChange,
   onRequestBodyChange,
   response,
+  requestType,
+  method,
 }) => {
   const bodyRef = useRef(null);
 
@@ -30,8 +34,13 @@ const ConsoleBody = ({
     <div className="console-body" ref={bodyRef} onMouseMove={onMouseMove}>
       <div className="req-section" style={boxStyle}>
         <textarea
-          value={request}
-          onChange={(e) => onRequestBodyChange(e.target.value)}
+          disabled={method === "GET" && requestType === "body"}
+          value={requestType === "body" ? request : headers}
+          onChange={
+            requestType === "body"
+              ? (e) => onRequestBodyChange(e.target.value)
+              : (e) => onHeadersBodyChange(e.target.value)
+          }
         />
       </div>
 
@@ -48,14 +57,21 @@ const ConsoleBody = ({
   );
 };
 
-const mapStateToProps = ({ ssconsole: { request, response } }) => ({
+const mapStateToProps = ({
+  ssconsole: { request, response, headers, requestType, method },
+}) => ({
   request,
+  headers,
   response,
+  requestType,
+  method,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   onRequestBodyChange: (body) =>
     dispatch({ type: "CHANGE_REQUEST_BODY", payload: body }),
+  onHeadersBodyChange: (headers) =>
+    dispatch({ type: "CHANGE_REQUEST_HEADERS", payload: headers }),
 });
 
 export default compose(

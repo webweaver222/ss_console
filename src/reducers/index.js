@@ -1,14 +1,14 @@
-import updateAuth from './updateAuth'
-import updateConsole from './updateConsole'
-  
-  
-  const reducer = (state, action) => {
-    return {
-        auth : updateAuth(state, action),
-        ssconsole: updateConsole(state, action)
-    }
-  }
-  
+import updateAuth from "./updateAuth";
+import updateConsole from "./updateConsole";
+import updateHistory from "./updateHistory";
+import updateMouseEvents from "./updateMouseEvents";
 
-  export default reducer;
-  
+const reducer = (state, action) => {
+  return {
+    auth: updateAuth(state, action),
+    ssconsole: updateConsole(state, action),
+    mouseEvents: updateMouseEvents(state, action),
+  };
+};
+
+export default reducer;

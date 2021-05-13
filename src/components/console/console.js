@@ -12,7 +12,7 @@ import ConsoleFooter from "../ConsoleFooter";
 
 import { withCookies } from "react-cookie";
 import withService from "../hoc/withService";
-import { logout, sendRequest, formatRequest } from "../../actions/index";
+import { formatRequest, send } from "../../actions/index";
 
 const Console = ({
   onExit,
@@ -62,7 +62,7 @@ const mapDispatchToProps = (dispatch, { sendSayApi, cookies }) => {
   return bindActionCreators(
     {
       onExit: () => logout(sendSayApi)(cookies),
-      onSendRequest: () => sendRequest(sendSayApi),
+      onSendRequest: () => send(sendSayApi)(),
       onFormatRequest: () => formatRequest,
       onResizeConsole: () => dispatch("RESIZE_CONSOLE"),
     },
