@@ -33,7 +33,7 @@ module.exports = (env = {}) => {
     output: {
       path: require("path").resolve(__dirname, "build"),
       filename: isProd ? "main-[hash:8].js" : undefined,
-      publicPath: "/",
+      publicPath: "/console/",
     },
 
     module: {
