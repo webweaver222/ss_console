@@ -7,12 +7,7 @@ import useDidMountEffect from "../customHooks/didMountEffect";
 import Clear from "../partials/clear";
 import HistoryBlock from "../HistoryBlock";
 
-const ConsoleHistory = ({
-  history,
-  onMount,
-  clearHistory,
-  onScrollHistory,
-}) => {
+const ConsoleHistory = ({ history, clearHistory, onScrollHistory }) => {
   console.log(history);
 
   const list = useRef(null);
@@ -21,12 +16,6 @@ const ConsoleHistory = ({
     list.current.scrollLeft += e.deltaY * 0.3;
     onScrollHistory(list.current.scrollLeft);
   };
-
-  useEffect(() => {
-    if (localStorage.getItem("history")) {
-      onMount(JSON.parse(localStorage.getItem("history") || "[]"));
-    }
-  }, []);
 
   useDidMountEffect(() => {
     localStorage.setItem("history", JSON.stringify(history));

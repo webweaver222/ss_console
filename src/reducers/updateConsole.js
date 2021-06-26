@@ -1,10 +1,10 @@
 import { updateHistory } from "./helpers";
 
 const initConsole = {
-  request: '{"name" : "alex", "job" : "janitor"}',
+  request: "",
   headers: '{"Accept": "*/*", "Content-Type": "application/json"}',
   response: "",
-  url: "https://reqres.in/api/users",
+  url: "",
   method: "GET",
   history: [],
   dropdown: null,

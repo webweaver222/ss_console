@@ -1,4 +1,18 @@
-import { validateJSON, destrUrlString, isUnique } from "../services/helpers";
+import {
+  validateJSON,
+  destrUrlString,
+  isUnique,
+  mockHistory,
+} from "../services/helpers";
+
+const getHistory = () => (dispatch) => {
+  console.log("mount");
+  if (!localStorage.getItem("history")) mockHistory();
+
+  const storedHistory = JSON.parse(localStorage.getItem("history") || "[]");
+
+  return dispatch({ type: "HISTORY_MOUNT", payload: storedHistory });
+};
 
 const send = (api) => (request_id) => async (dispatch, getState) => {
   let {
@@ -116,4 +130,4 @@ const copyRequest = (id) => (dispatch, getState) => {
   dispatch({ type: "CHANGE_REQUEST_URL", payload: title });
 };
 
-export { mouseMove, formatRequest, copyRequest, send };
+export { mouseMove, formatRequest, copyRequest, send, getHistory };

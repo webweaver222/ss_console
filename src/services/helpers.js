@@ -31,4 +31,32 @@ const destrUrlString = (url) => {
   return [domain, path];
 };
 
-export { validateJSON, destrUrlString, isUnique };
+const mockHistory = () => {
+  const history = [
+    {
+      domain: "reqres.in",
+      headers: '{"Accept": "*/*", "Content-Type": "application/json"}',
+      id: 0,
+      method: "GET",
+      path: "/api/users",
+      request: '{"name" : "alex", "job" : "janitor"}',
+      success: true,
+      title: "https://reqres.in/api/users",
+    },
+
+    {
+      domain: "frontend-test-assignment-api.abz.agency",
+      headers: '{\n  "Accept": "*/*",\n  "Content-Type": "application/json"\n}',
+      id: 1,
+      method: "POST",
+      path: "/api/v1/users",
+      request: "{}",
+      success: false,
+      title: "https://frontend-test-assignment-api.abz.agency/api/v1/users",
+    },
+  ];
+
+  localStorage.setItem("history", JSON.stringify(history));
+};
+
+export { validateJSON, destrUrlString, isUnique, mockHistory };
