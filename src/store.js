@@ -1,22 +1,17 @@
-import {createStore, applyMiddleware} from 'redux'
-import thunk from 'redux-thunk'
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 
-import reducer from './reducers'
+import reducer from "./reducers";
 
 const stringMdw = () => (dispatch) => (action) => {
-    
-    if (typeof action === 'string') {
-        console.log(action);
+  if (typeof action === "string") {
     return dispatch({
-        type: action
-    })
-}
-console.log(action.type);
-    return dispatch(action)
-}
+      type: action,
+    });
+  }
+  return dispatch(action);
+};
 
+const store = createStore(reducer, applyMiddleware(thunk, stringMdw));
 
-const store = createStore(reducer, applyMiddleware(thunk, stringMdw))
-
-
-export default store
+export default store;
