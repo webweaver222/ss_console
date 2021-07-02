@@ -27,3 +27,5 @@ ReactDom.render(
   </Provider>,
   document.getElementById("root")
 );
+
+import "./resources/media.sass";
